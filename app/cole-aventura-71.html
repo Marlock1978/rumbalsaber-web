@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f6f3ee">
-<title>Rumb al Saber · 4t de Primària · v70</title>
+<title>Rumb al Saber · 4t de Primària · v71</title>
 <style>
  :root{
   --bg:#f6f3ee; --card:#ffffff; --ink:#2b2440; --dim:#4a4459; --line:#e7e2d9;
@@ -2449,7 +2449,7 @@ const DEFAULT_PRIZES=[
 /* Decret 41/2025: Coneixement del Medi és UNA àrea amb tres blocs de sabers */
 /* Numero de versio. Puja cada vegada que s'entrega un arxiu nou,
    i es veu a l'ajuda per saber quina versio te cadascu. */
-const APPVER="70";
+const APPVER="71";
 const AREAS={
  llengua:{id:"llengua",e:"📚",head:"idle",
    d:{ca:"Llegir, escriure i parlar millor en castellà: com són els textos, com funcionen les paraules i com gaudir dels llibres.",
@@ -10986,6 +10986,11 @@ function screenAdmin(){
  }
  if(adminTab==="pack"){
   return head+`<div class="col">
+  ${typeof updCard==="function"?updCard():""}
+  <div class="card"><b>💾 ${t("backup")}</b><div class="row" style="margin-top:8px">
+   <button class="ghost" style="flex:1" onclick="download('cole-progres.json',JSON.stringify(DB))">${t("exportp")}</button>
+   <button class="ghost" style="flex:1" onclick="$('#impProg').click()">${t("importp")}</button></div>
+   <input type="file" id="impProg" accept="application/json" style="display:none" onchange="importProgress(this)"></div>
    <div class="card"><b>${t("space")}</b><p class="kpi">${(bytes/1048576).toFixed(2)} MB</p>
     <div class="bar"><i style="width:${Math.min(100,bytes/5242880*100)}%"></i></div>
     <p class="dim">${done}/${slots.length} ${t("art").toLowerCase()} · ${Object.keys(PACK.audio).length} ${t("audio").toLowerCase()}</p></div>
@@ -10999,11 +11004,6 @@ function screenAdmin(){
    <div class="card"><p class="dim">${L()==="ca"
     ?"Puja aquí les teves il·lustracions i substituiran les de sèrie. Exporta el paquet abans d'obrir una versió nova de l'app i importa'l després: tot el teu disseny tornarà al seu lloc."
     :"Sube aquí tus ilustraciones y sustituirán a las de serie. Exporta el paquete antes de abrir una versión nueva de la app e impórtalo después: todo tu diseño volverá a su sitio."}</p></div>
-  <div class="card"><b>💾 ${t("backup")}</b><div class="row" style="margin-top:8px">
-   <button class="ghost" style="flex:1" onclick="download('cole-progres.json',JSON.stringify(DB))">${t("exportp")}</button>
-   <button class="ghost" style="flex:1" onclick="$('#impProg').click()">${t("importp")}</button></div>
-   <input type="file" id="impProg" accept="application/json" style="display:none" onchange="importProgress(this)"></div>
-  ${typeof updCard==="function"?updCard():""}
   <button class="btn mut" onclick="cur=null;go('profiles')">👥 ${t("switchp")}</button>
   <div class="card" style="border-color:#ef535066"><b style="color:#ef9a9a">⚠️ ${t("danger")}</b>
    <div class="col" style="margin-top:10px">
@@ -11500,10 +11500,10 @@ window.addEventListener("beforeunload",()=>{try{speechSynthesis.cancel()}catch(e
 
 </script>
 <script>
-/* ══ v70 · Rumb al Saber com a app ════════════════════════════════
+/* ══ v70-71 · Rumb al Saber com a app ════════════════════════════════
    Tot el que hi ha aqui nomes fa feina dins de l'app d'Android/iOS.
    Al navegador, l'app segueix exactament igual que abans. */
-var APP_VER = 70;
+var APP_VER = 71;
 /* L'unic lloc on hi ha l'adreça de les actualitzacions. */
 /* De moment les actualitzacions viuen a GitHub Pages. Quan el domini
    rumbalsaber.app apunti a GitHub Pages, aquesta adreça hi redirigeix sola. */
@@ -11617,41 +11617,56 @@ var updSt = { s: "", msg: "", pct: 0, info: null };
 function updTxt(ca, es){ return L() === "ca" ? ca : es; }
 function updCard(){
   var nat = !!window.RUMB_NATIVE;
-  var b = "";
+  var box = 'class="card updbox" style="border:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 9%,#fff)"';
   if (!nat){
-    return '<div class="card"><b>🔄 ' + updTxt("Versió", "Versión") + ' ' + APP_VER + '</b>' +
+    return '<div ' + box + '><b>🔄 ' + updTxt("Versió", "Versión") + ' ' + APP_VER + '</b>' +
       '<p class="dim" style="margin-bottom:0">' + updTxt("Les actualitzacions automàtiques són a l'app d'Android i iPhone.",
         "Las actualizaciones automáticas están en la app de Android e iPhone.") + '</p></div>';
   }
+  var VERD = 'style="background:#2e9d4a;border-color:#2e9d4a;color:#fff;box-shadow:0 4px 0 #1f7436"';
+  var b = "";
   if (updSt.s === "busy") b = '<p class="dim">' + esc(updSt.msg) + (updSt.pct ? " · " + updSt.pct + "%" : "") + '</p>' +
       '<div class="bar"><i style="width:' + (updSt.pct || 3) + '%"></i></div>';
-  else if (updSt.s === "offer") b = '<p>' + esc(updSt.msg) + '</p><button class="btn" onclick="updDownload()">⬇️ ' +
+  else if (updSt.s === "offer") b = '<p><b>🎁 ' + esc(updSt.msg) + '</b></p><button class="btn" ' + VERD + ' onclick="updDownload()">⬇️ ' +
       updTxt("Baixa la versió ", "Descarga la versión ") + updSt.info.ver + '</button>';
-  else if (updSt.s === "ready") b = '<p>' + esc(updSt.msg) + '</p><button class="btn" onclick="location.replace(\'/index.html\')">🔁 ' +
+  else if (updSt.s === "ready") b = '<p><b>' + esc(updSt.msg) + '</b></p><button class="btn" ' + VERD + ' onclick="location.replace(\'/index.html\')">🔁 ' +
       updTxt("Reinicia ara", "Reiniciar ahora") + '</button>';
   else b = (updSt.msg ? '<p class="dim">' + esc(updSt.msg) + '</p>' : '') +
-      '<button class="btn mut" onclick="updCheck()">🔄 ' + updTxt("Cerca actualitzacions", "Buscar actualizaciones") + '</button>';
-  return '<div class="card"><b>🔄 ' + updTxt("Actualitzacions", "Actualizaciones") + '</b>' +
+      '<button class="btn" onclick="updCheck()">🔄 ' + updTxt("Cerca actualitzacions", "Buscar actualizaciones") + '</button>';
+  return '<div ' + box + '><b style="font-size:calc(var(--fs) + 2px)">🔄 ' + updTxt("Actualitzacions", "Actualizaciones") + '</b>' +
     '<p class="dim" style="margin:4px 0 8px">' + updTxt("Versió instal·lada: ", "Versión instalada: ") + APP_VER +
     '. ' + updTxt("Només es connecta a internet quan prems el botó.", "Solo se conecta a internet cuando pulsas el botón.") + '</p>' + b + '</div>';
 }
 function updSet(s, msg, extra){ updSt.s = s; updSt.msg = msg || ""; if (extra) Object.assign(updSt, extra); try{ render(); }catch(e){} }
+/* Primer amb fetch (GitHub Pages permet llegir des de qualsevol origen) i,
+   si no va, pel client HTTP natiu de l'app. */
+function updGetJSON(url){
+  return fetch(url, { cache: "no-store" }).then(function(r){
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.json();
+  }).catch(function(e1){
+    var H = window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.CapacitorHttp;
+    if (!H) throw e1;
+    return H.get({ url: url, responseType: "json", connectTimeout: 15000, readTimeout: 15000 }).then(function(r){
+      if (!r || r.status !== 200) throw new Error("HTTP " + (r && r.status));
+      var d = r.data; if (typeof d === "string") d = JSON.parse(d);
+      return d;
+    }).catch(function(e2){ throw new Error((e1 && e1.message || e1) + " / " + (e2 && e2.message || e2)); });
+  });
+}
 function updCheck(){
-  var H = window.Capacitor && Capacitor.Plugins.CapacitorHttp;
-  if (!H){ updSet("", updTxt("Aquesta funció només és a l'app.", "Esta función solo está en la app.")); return; }
   updSet("busy", updTxt("Comprovant…", "Comprobando…"), { pct: 0 });
-  H.get({ url: UPD.base + "version.json?t=" + Date.now(), responseType: "json",
-          connectTimeout: 15000, readTimeout: 15000 })
-    .then(function(r){
-      var d = r && r.data; if (typeof d === "string") d = JSON.parse(d);
-      if (!r || r.status !== 200 || !d || !d.ver || !d.file) throw new Error("resposta");
+  updGetJSON(UPD.base + "version.json?t=" + Date.now())
+    .then(function(d){
+      if (!d || !d.ver || !d.file) throw new Error("version.json");
       if (+d.ver <= APP_VER){ updSet("", updTxt("Ja tens la darrera versió.", "Ya tienes la última versión.")); return; }
       var mb = d.size ? " (" + (d.size / 1048576).toFixed(0) + " MB)" : "";
       var nt = d.notes ? (d.notes[L()] || d.notes.ca || "") : "";
       updSet("offer", updTxt("Hi ha una versió nova", "Hay una versión nueva") + mb + ". " + nt, { info: d });
     })
-    .catch(function(){ updSet("", updTxt("No s'ha pogut connectar. Comprova la connexió i torna-ho a provar.",
-                                         "No se ha podido conectar. Comprueba la conexión y vuelve a intentarlo.")); });
+    .catch(function(e){ updSet("", updTxt("No s'ha pogut connectar. Comprova la connexió i torna-ho a provar.",
+                                          "No se ha podido conectar. Comprueba la conexión y vuelve a intentarlo.") +
+                                   " [" + String(e && e.message || e).slice(0, 120) + "]"); });
 }
 function updDownload(){
   var d = updSt.info, PL = Capacitor.Plugins, FS = PL.Filesystem, FT = PL.FileTransfer;
