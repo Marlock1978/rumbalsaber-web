@@ -1,9 +1,9 @@
 {
-  "ver": 71,
-  "file": "cole-aventura-71.html",
-  "size": 20627489,
+  "ver": 72,
+  "file": "cole-aventura-72.html",
+  "size": 20630663,
   "notes": {
-    "ca": "Actualitzacions al capdamunt del Paquet, botó verd quan n'hi ha de noves i connexió més segura.",
-    "es": "Actualizaciones arriba del todo en Paquete, botón verde cuando hay novedades y conexión más segura."
+    "ca": "El ressaltat de les paraules va al ritme de la veu.",
+    "es": "El resaltado de las palabras va al ritmo de la voz."
   }
 }
