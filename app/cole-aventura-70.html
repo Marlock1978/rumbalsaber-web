@@ -11505,7 +11505,9 @@ window.addEventListener("beforeunload",()=>{try{speechSynthesis.cancel()}catch(e
    Al navegador, l'app segueix exactament igual que abans. */
 var APP_VER = 70;
 /* L'unic lloc on hi ha l'adreça de les actualitzacions. */
-var UPD = { base: "https://rumbalsaber.app/app/" };
+/* De moment les actualitzacions viuen a GitHub Pages. Quan el domini
+   rumbalsaber.app apunti a GitHub Pages, aquesta adreça hi redirigeix sola. */
+var UPD = { base: "https://marlock1978.github.io/rumbalsaber-web/app/" };
 
 /* ── Clau de "curs complet" ──────────────────────────────────────
    Preparada pero APAGADA (on:false): ara mateix tot es obert.
