@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f6f3ee">
-<title>Rumb al Saber · 4t de Primària · v72</title>
+<title>Rumb al Saber · 4t de Primària · v74</title>
 <style>
  :root{
   --bg:#f6f3ee; --card:#ffffff; --ink:#2b2440; --dim:#4a4459; --line:#e7e2d9;
@@ -2457,7 +2457,7 @@ const DEFAULT_PRIZES=[
 /* Decret 41/2025: Coneixement del Medi és UNA àrea amb tres blocs de sabers */
 /* Numero de versio. Puja cada vegada que s'entrega un arxiu nou,
    i es veu a l'ajuda per saber quina versio te cadascu. */
-const APPVER="72";
+const APPVER="74";
 const AREAS={
  llengua:{id:"llengua",e:"📚",head:"idle",
    d:{ca:"Llegir, escriure i parlar millor en castellà: com són els textos, com funcionen les paraules i com gaudir dels llibres.",
@@ -11551,7 +11551,7 @@ window.addEventListener("beforeunload",()=>{try{speechSynthesis.cancel()}catch(e
 /* ══ v70-71 · Rumb al Saber com a app ════════════════════════════════
    Tot el que hi ha aqui nomes fa feina dins de l'app d'Android/iOS.
    Al navegador, l'app segueix exactament igual que abans. */
-var APP_VER = 72;
+var APP_VER = 74;
 /* L'unic lloc on hi ha l'adreça de les actualitzacions. */
 /* De moment les actualitzacions viuen a GitHub Pages. Quan el domini
    rumbalsaber.app apunti a GitHub Pages, aquesta adreça hi redirigeix sola. */
@@ -11718,22 +11718,58 @@ function updCheck(){
 }
 function updDownload(){
   var d = updSt.info, PL = Capacitor.Plugins, FS = PL.Filesystem, FT = PL.FileTransfer;
-  if (!d || !FS || !FT) return;
-  var path = "upd/" + d.file, h = null;
+  if (!d || !FS){ updSet("", updTxt("Aquesta funció només és a l'app.", "Esta función solo está en la app.")); return; }
+  var path = "upd/" + d.file, h = null, pas = "inici";
+  var url = UPD.base + d.file;
+  var fet = function(st){ return st && st.size && (!d.size || Math.abs(st.size - d.size) <= Math.max(64, d.size * 0.002)); };
   updSet("busy", updTxt("Baixant…", "Descargando…"), { pct: 0 });
-  FS.mkdir({ path: "upd", directory: "DATA", recursive: true }).catch(function(){})
-    .then(function(){ return FS.getUri({ path: path, directory: "DATA" }); })
-    .then(function(u){
+  /* Via A: descarrega nativa directa al fitxer */
+  var viaA = function(){
+    if (!FT) return Promise.reject(new Error("sense FileTransfer"));
+    pas = "A:uri";
+    return FS.getUri({ path: path, directory: "DATA" }).then(function(u){
+      pas = "A:baixada";
       return FT.addListener("progress", function(p){
         if (p && p.lengthComputable && p.contentLength){
           var n = Math.floor(p.bytes / p.contentLength * 100);
           if (n !== updSt.pct){ updSt.pct = n; try{ render(); }catch(e){} }
         }
-      }).then(function(hh){ h = hh; return FT.downloadFile({ url: UPD.base + d.file, path: u.uri, progress: true }); });
+      }).then(function(hh){ h = hh; return FT.downloadFile({ url: url, path: u.uri, progress: true }); });
+    }).then(function(){ pas = "A:mida"; return FS.stat({ path: path, directory: "DATA" }); })
+      .then(function(st){ if (!fet(st)) throw new Error("mida " + (st && st.size) + "≠" + d.size); });
+  };
+  /* Via B: es baixa com a text i s'escriu a trossos */
+  var viaB = function(){
+    pas = "B:baixada"; updSt.pct = 0;
+    return fetch(url + "?t=" + Date.now(), { cache: "no-store" }).then(function(r){
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.text();
+    }).then(function(txt){
+      if (txt.indexOf("<title>Rumb al Saber") < 0) throw new Error("contingut");
+      pas = "B:escriptura";
+      var T = 2 * 1024 * 1024, n = Math.ceil(txt.length / T), k = 0;
+      var pas2 = function(){
+        if (k >= n) return Promise.resolve();
+        var tros = txt.slice(k * T, (k + 1) * T);
+        var op = k === 0 ? FS.writeFile({ path: path, data: tros, directory: "DATA", encoding: "utf8", recursive: true })
+                         : FS.appendFile({ path: path, data: tros, directory: "DATA", encoding: "utf8" });
+        k++; updSt.pct = Math.floor(k / n * 100); try{ render(); }catch(e){}
+        return op.then(pas2);
+      };
+      return pas2();
+    }).then(function(){ pas = "B:mida"; return FS.stat({ path: path, directory: "DATA" }); })
+      .then(function(st){ if (!fet(st)) throw new Error("mida " + (st && st.size) + "≠" + d.size); });
+  };
+  var errA = "";
+  FS.mkdir({ path: "upd", directory: "DATA", recursive: true }).catch(function(){})
+    .then(viaA)
+    .catch(function(e){
+      errA = pas + " " + String(e && e.message || e).slice(0, 80);
+      if (h){ try{ h.remove(); }catch(x){} h = null; }
+      return FS.deleteFile({ path: path, directory: "DATA" }).catch(function(){}).then(viaB);
     })
-    .then(function(){ return FS.stat({ path: path, directory: "DATA" }); })
-    .then(function(st){
-      if (d.size && Math.abs(st.size - d.size) > 16) throw new Error("mida");
+    .then(function(){
+      pas = "registre";
       return FS.writeFile({ path: "upd/current.json", directory: "DATA", encoding: "utf8",
         data: JSON.stringify({ ver: +d.ver, file: d.file }) });
     })
@@ -11743,11 +11779,12 @@ function updDownload(){
       updSet("ready", updTxt("Versió " + d.ver + " baixada. Es farà servir en reiniciar l'app.",
                              "Versión " + d.ver + " descargada. Se usará al reiniciar la app."));
     })
-    .catch(function(){
-      if (h) h.remove();
+    .catch(function(e){
+      if (h){ try{ h.remove(); }catch(x){} }
       FS.deleteFile({ path: path, directory: "DATA" }).catch(function(){});
       updSet("", updTxt("La baixada no s'ha completat. Torna-ho a provar amb una connexió estable.",
-                        "La descarga no se ha completado. Vuelve a intentarlo con una conexión estable."));
+                        "La descarga no se ha completado. Vuelve a intentarlo con una conexión estable.") +
+              " [" + (errA ? errA + " | " : "") + pas + " " + String(e && e.message || e).slice(0, 80) + "]");
     });
 }
 
