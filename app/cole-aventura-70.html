@@ -11585,6 +11585,28 @@ setTimeout(function(){
   }
 })();
 
+/* ── Quan l'app es tanca o passa a segon pla, silenci ───────────────
+   La musica i la veu s'aturen en sortir (boto d'inici, canviar d'app,
+   bloquejar el mobil o tancar la pestanya) i la musica torna en entrar. */
+(function(){
+  function calla(){
+    try{ if (typeof MUSIC !== "undefined") MUSIC.stop(); }catch(e){}
+    try{ if (typeof TTS !== "undefined") TTS.stop(); }catch(e){}
+    try{ if (window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
+    try{ if (typeof SFX !== "undefined" && SFX.ctx && SFX.ctx.suspend) SFX.ctx.suspend(); }catch(e){}
+  }
+  function torna(){
+    try{ if (typeof MUSIC !== "undefined" && typeof scr !== "undefined") MUSIC.auto(); }catch(e){}
+  }
+  document.addEventListener("visibilitychange", function(){ if (document.hidden) calla(); else torna(); });
+  window.addEventListener("pagehide", calla);
+  var C = window.Capacitor, A = C && C.Plugins && C.Plugins.App;
+  if (A && C.isNativePlatform && C.isNativePlatform()){
+    A.addListener("pause", calla);
+    A.addListener("resume", torna);
+  }
+})();
+
 /* ── Actualitzacions ──────────────────────────────────────────────
    Nomes es connecta quan el tutor prem el boto. Baixa la versio nova
    a l'app i la fa servir a partir del proper arrencada. Si la versio
