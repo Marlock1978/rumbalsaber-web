@@ -1,9 +1,9 @@
 {
-  "ver": 82,
-  "file": "cole-aventura-82.html",
-  "size": 26127812,
+  "ver": 83,
+  "file": "cole-aventura-83.html",
+  "size": 26128856,
   "notes": {
-    "ca": "El personatge respira amb els peus a terra, el camí d'exploració ocupa tot l'ample i té zoom, i na Serena presenta l'app des de la muntanya.",
-    "es": "El personaje respira con los pies en el suelo, el camino de exploración ocupa todo el ancho y tiene zoom, y Serena presenta la app desde la montaña."
+    "ca": "Personatges i criatures amb ombra als peus, el teu personatge més nítid i centrat a l'inici, i un fons més alt per a na Serena.",
+    "es": "Personajes y criaturas con sombra en los pies, tu personaje más nítido y centrado en el inicio, y un fondo más alto para Serena."
   }
 }
