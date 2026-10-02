@@ -1,9 +1,9 @@
 {
-  "ver": 85,
-  "file": "cole-aventura-85.html",
-  "size": 26179679,
+  "ver": 86,
+  "file": "cole-aventura-86.html",
+  "size": 26180679,
   "notes": {
-    "ca": "La veu d'ànim arriba de seguida, les làmines s'obren en gran, el tutor es llegeix millor al mòbil i la presentació de na Serena està retocada.",
-    "es": "La voz de ánimo llega enseguida, las láminas se abren en grande, el tutor se lee mejor en el móvil y la presentación de Serena está retocada."
+    "ca": "La barra de dalt del mòbil ja no tapa l'app i les notes caben a la pantalla.",
+    "es": "La barra de arriba del móvil ya no tapa la app y las notas caben en la pantalla."
   }
 }
