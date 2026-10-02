@@ -1,9 +1,9 @@
 {
-  "ver": 77,
-  "file": "cole-aventura-77.html",
-  "size": 25023979,
+  "ver": 78,
+  "file": "cole-aventura-78.html",
+  "size": 25049041,
   "notes": {
-    "ca": "Mapes d'aventura nous amb un paisatge per trimestre, caselles en 3D, efectes animats, personatge que es mou i camí d'exploració amb prat.",
-    "es": "Mapas de aventura nuevos con un paisaje por trimestre, casillas en 3D, efectos animados, personaje que se mueve y camino de exploración con pradera."
+    "ca": "Icones del mapa retallades de nou i el personatge de l'inici es mou amb més suavitat.",
+    "es": "Iconos del mapa recortados de nuevo y el personaje del inicio se mueve con más suavidad."
   }
 }
