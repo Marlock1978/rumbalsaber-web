@@ -1,9 +1,9 @@
 {
-  "ver": 75,
-  "file": "cole-aventura-75.html",
-  "size": 24714848,
+  "ver": 76,
+  "file": "cole-aventura-76.html",
+  "size": 24903151,
   "notes": {
-    "ca": "Mapes d'aventura nous: un paisatge per a cada trimestre, amb efectes animats, i el teu personatge es mou.",
-    "es": "Mapas de aventura nuevos: un paisaje para cada trimestre, con efectos animados, y tu personaje se mueve."
+    "ca": "Mapes d'aventura nous: un paisatge per a cada trimestre, caselles en 3D, efectes animats i el teu personatge es mou.",
+    "es": "Mapas de aventura nuevos: un paisaje para cada trimestre, casillas en 3D, efectos animados y tu personaje se mueve."
   }
 }
