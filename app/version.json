@@ -1,9 +1,9 @@
 {
-  "ver": 81,
-  "file": "cole-aventura-81.html",
-  "size": 26125893,
+  "ver": 82,
+  "file": "cole-aventura-82.html",
+  "size": 26127812,
   "notes": {
-    "ca": "El ninot d'entrenament surt a les pràctiques, el teu personatge es veu més gran a l'inici, el camí d'exploració és més ample i les animacions són més suaus.",
-    "es": "El muñeco de entrenamiento aparece en las prácticas, tu personaje se ve más grande en el inicio, el camino de exploración es más ancho y las animaciones son más suaves."
+    "ca": "El personatge respira amb els peus a terra, el camí d'exploració ocupa tot l'ample i té zoom, i na Serena presenta l'app des de la muntanya.",
+    "es": "El personaje respira con los pies en el suelo, el camino de exploración ocupa todo el ancho y tiene zoom, y Serena presenta la app desde la montaña."
   }
 }
